@@ -16,6 +16,7 @@
 #define CFG_DIM_BLINKING_PREVIEW true
 #define CFG_LOWEST_MODE 50 // out of 255 where 255 is the same as MEDIUM
 #define CFG_DISABLE_MED_MODE false
+#define CFG_GRAVITY_DRV_MODE LOW // should be set to LOW or HIGH
 
 
 // Advanced Configuration
@@ -308,7 +309,7 @@ void loop() {
       pinMode(DPIN_PWR, OUTPUT);
       digitalWrite(DPIN_PWR, HIGH);
       analogWrite(DPIN_DRV_EN, 1);
-      digitalWrite(DPIN_DRV_MODE, HIGH);
+      digitalWrite(DPIN_DRV_MODE, CFG_GRAVITY_DRV_MODE);
       targetOutput = currentOutput = 1;
       forcefade = true;
       break;
