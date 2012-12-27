@@ -1,9 +1,13 @@
 /*
-
-Sharp's HexBright Firmware
-Dec 26th, 2012
-
-*/
+ *
+ * Sharp's HexBright Firmware
+ * (based on the factory firmware, with some code from hexbright4)
+ * Awating a license from upstream. Until then, consider new features
+ * I add as beerware.
+ *
+ * https://en.wikipedia.org/wiki/Beerware
+ *
+ */
 
 
 // Basic Configuration
@@ -11,6 +15,7 @@ Dec 26th, 2012
 #define CFG_ENABLE_GRAVITY_MODE true
 #define CFG_DIM_BLINKING_PREVIEW true
 #define CFG_LOWEST_MODE 50 // out of 255 where 255 is the same as MEDIUM
+
 
 // Advanced Configuration
 #define CFG_STEP 3 // higher is faster between modes
