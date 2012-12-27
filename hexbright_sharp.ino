@@ -15,6 +15,7 @@
 #define CFG_ENABLE_GRAVITY_MODE true
 #define CFG_DIM_BLINKING_PREVIEW true
 #define CFG_LOWEST_MODE 50 // out of 255 where 255 is the same as MEDIUM
+#define CFG_DISABLE_MED_MODE false
 
 
 // Advanced Configuration
@@ -203,7 +204,11 @@ void loop() {
     break;
   case MODE_LOW:
     if (btnDown && !newBtnDown && (time-btnTime)>50)
-      newMode = MODE_MED;
+      if(CFG_DISABLE_MED_MODE) {
+        newMode = MODE_HIGH;
+      } else {
+        newMode = MODE_MED;
+      }
     break;
   case MODE_MED:
     if (btnDown && !newBtnDown && (time-btnTime)>50)
