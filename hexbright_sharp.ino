@@ -9,20 +9,45 @@
  *
  */
 
-
+//
 // Basic Configuration
+//
+
+// CFG_FADE (true, false): does the hexbright fade from mode to mode
 #define CFG_FADE true
+
+// CFG_ENABLE_GRAVITY_MODE (true, false): does the hexbright enter "gravity"
+// mode if button is held down past the blinky stage when powering on
 #define CFG_ENABLE_GRAVITY_MODE true
+
+// CFG_ENABLE_DIM_BLINKING_PREVIEW (true, false): does the hexbright dim
+// blinky mode when not fully entered
 #define CFG_DIM_BLINKING_PREVIEW true
-#define CFG_LOWEST_MODE 50 // out of 255 where 255 is the same as MEDIUM
+
+// CFG_LOWEST_MODE (1-255): PWM value for low mode. 255 is same intensity
+// as medium
+#define CFG_LOWEST_MODE 50
+
+// CFG_DISABLE_MED_MODE (true, false): should medium mode be disabled (skipped)
 #define CFG_DISABLE_MED_MODE false
-#define CFG_GRAVITY_DRV_MODE LOW // should be set to LOW or HIGH
+
+// CFG_GRAVITY_DRV_MODE (LOW, HIGH): what mode should the driver be in during
+// "gravity" mode
+#define CFG_GRAVITY_DRV_MODE LOW
+
+// CFG_MODE_CHANGE_TIMEOUT (0 to disable or amount in seconds): after how many
+//seconds does the mode lock so that clicking the button turns the light off
+#define CFG_MODE_CHANGE_TIMEOUT 5
 
 
+//
 // Advanced Configuration
-#define CFG_STEP 3 // higher is faster between modes
+//
+#define CFG_STEP 3 // higher is faster when fading between modes
 
+//
 // Expert Configuration
+//
 #define CFG_OVERTEMP                340
 
 
@@ -73,7 +98,7 @@ byte disable[] = {
 byte enable[] = {
   ACC_REG_MODE, 0x01};  // Mode: active!
 
-unsigned long modeChangeTime;
+unsigned long modeChangeTime = millis();
 
 void blinkMode() {
   if(CFG_DIM_BLINKING_PREVIEW && mode == MODE_BLINKING_PREVIEW)
@@ -205,7 +230,9 @@ void loop() {
     break;
   case MODE_LOW:
     if (btnDown && !newBtnDown && (time-btnTime)>50)
-      if(CFG_DISABLE_MED_MODE) {
+      if(CFG_MODE_CHANGE_TIMEOUT != 0 && millis() - modeChangeTime > CFG_MODE_CHANGE_TIMEOUT * 1000) {
+        newMode = MODE_OFF;
+      } else if(CFG_DISABLE_MED_MODE) {
         newMode = MODE_HIGH;
       } else {
         newMode = MODE_MED;
@@ -213,7 +240,11 @@ void loop() {
     break;
   case MODE_MED:
     if (btnDown && !newBtnDown && (time-btnTime)>50)
-      newMode = MODE_HIGH;
+      if(CFG_MODE_CHANGE_TIMEOUT != 0 && millis() - modeChangeTime > CFG_MODE_CHANGE_TIMEOUT * 1000) {
+        newMode = MODE_OFF;
+      } else {
+        newMode = MODE_HIGH;
+      }
     break;
   case MODE_HIGH:
     if (btnDown && !newBtnDown && (time-btnTime)>50)
@@ -314,7 +345,7 @@ void loop() {
       forcefade = true;
       break;
     }      
-
+    modeChangeTime = millis();
     mode = newMode;
   }
 
